@@ -64,21 +64,29 @@ const KnowledgeBase: React.FC = () => {
 
   // --- Actions ---
   const handleDelete = (id: string) => {
-    if (confirm('确定要删除这条规则吗？')) {
+    if (window.confirm('确定要删除这条规则吗？')) {
       deleteRule(id);
-      loadRules();
+      // Optimistic update: remove from local state immediately to ensure UI reflects changes
+      setRules(prevRules => prevRules.filter(r => r.id !== id));
+      
+      // Also remove from playground selection to keep sync
+      setPlaygroundSelectedRules(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
   const handleClear = () => {
-    if (confirm('警告：确定要清空所有规则吗？\n此操作将删除所有规则且不可恢复！')) {
+    if (window.confirm('警告：确定要清空所有规则吗？\n此操作将删除所有规则且不可恢复！')) {
       clearRules();
-      loadRules();
+      setRules([]);
     }
   };
 
   const handleReset = () => {
-    if (confirm('确定要重置为默认规则吗？\n这将清除您添加的所有自定义规则并恢复初始状态。')) {
+    if (window.confirm('确定要重置为默认规则吗？\n这将清除您添加的所有自定义规则并恢复初始状态。')) {
       resetRulesToDefaults();
       loadRules();
     }
@@ -111,7 +119,7 @@ const KnowledgeBase: React.FC = () => {
 
     saveRule(newRule);
     setIsModalOpen(false);
-    loadRules();
+    loadRules(); // Reload to get updated sort order and data
     resetForm();
   };
 
