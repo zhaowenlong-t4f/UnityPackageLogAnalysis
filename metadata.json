@@ -1,0 +1,5 @@
+{
+  "name": "UnityLogAI",
+  "description": "Intelligent Unity Build Log Analysis Tool featuring regex-based error detection and AI-assisted rule generation.",
+  "requestFramePermissions": []
+}
